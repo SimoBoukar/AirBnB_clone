@@ -2,12 +2,13 @@
 """Create a BaseModel Class"""
 import uuid
 from datetime import datetime
+import models
 
 
 class BaseModel:
     """BaseModel Class"""
     def __init__(self, *args, **kwargs):
-        """Initialization"""
+        """Instantiation"""
         if kwargs:
             del kwargs["__class__"]
             for key, value in kwargs.items():
@@ -20,10 +21,12 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            models.storage.new(self)
 
     def save(self):
         """Update the time."""
         self.updated_at = datetime.now()
+        models.storage.save()
 
     def __str__(self):
         """__str__ print objects info"""
