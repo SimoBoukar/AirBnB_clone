@@ -33,7 +33,7 @@ class FileStorage():
                 desrl = load(read_jsfile)
                 for obj in desrl.values():
                     cls_name = obj['__class__']
-                    if cls_name in clsnametoobj
+                    if cls_name in clsnametoobj:
                         cls_obj = clsnametoobj[cls_name]
                         self.new(cls_obj(**obj))
 
