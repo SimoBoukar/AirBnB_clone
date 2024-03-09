@@ -30,7 +30,11 @@ class BaseModel:
 
     def __str__(self):
         """__str__ print objects info"""
-        return "[{}] ({}) {}".format(self.__class__.__name__, self.id, self.__dict__)
+        return "[{}] ({}) {}".format(
+            self.__class__.__name__,
+            self.id,
+            self.__dict__
+        )
 
     def to_dict(self):
         """Return dict"""

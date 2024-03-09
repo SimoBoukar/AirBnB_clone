@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import cmd
+import shlex
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -11,8 +12,8 @@ from models import storage
 
 
 model_class = {
-    'BaseModel' : BaseModel,
-    'User' : User,
+    'BaseModel': BaseModel,
+    'User': User,
     'Amenity': Amenity,
     'City': City,
     'State': State,
@@ -21,8 +22,65 @@ model_class = {
 }
 
 
+def change_type(value):
+    """Check the type of the input and change it to the right type"""
+    try:
+        val = int(value)
+    except ValueError:
+        try:
+            val = float(value)
+        except ValueError:
+            if value[0] == '"' and value[-1] == '"':
+                val = value[1:-1]
+            else:
+                val = value
+    return val
+
+
 class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) '
+
+    def default(self, arg):
+        """Override the default method to catch more commands"""
+        args = arg.split('.')
+        if len(args) == 2:
+            class_name = args[0]
+            if args[1] == 'all()':
+                self.do_all(class_name)
+            elif args[1] == 'count()':
+                self.do_count(class_name)
+            else:
+                command, obj_id = args[1].split("(", 1)
+                obj_id = obj_id[:-1]
+                if command == "show":
+                    self.do_show("{} {}".format(class_name, obj_id[1:-1]))
+                elif command == "destroy":
+                    self.do_destroy("{} {}".format(class_name, obj_id[1:-1]))
+                elif command == "update":
+                    the_id, attrs = obj_id.split(", ", 1)
+                    if isinstance(attrs, dict) or "{" in attrs:
+                        attrs = attrs.strip('{}')
+                        attr = attrs.split(", ")
+                        attr_dict = {
+                            item.split(': ')[0]: item.split(': ')[1]
+                            for item in attr}
+                        for key, val in attr_dict.items():
+                            self.do_update("{} {} {} {}".format(
+                                class_name,
+                                the_id.strip('"'),
+                                key.strip('\'"'),
+                                val
+                            ))
+                    else:
+                        attr = shlex.split(obj_id)
+                        for i in range(len(attr)):
+                            attr[i] = attr[i].strip(',')
+                        self.do_update("{} {} {} {}".format(
+                            class_name,
+                            attr[0],
+                            attr[1],
+                            attr[2],
+                        ))
 
     def do_EOF(self, arg):
         """EOF command to exit the program"""
@@ -113,6 +171,23 @@ class HBNBCommand(cmd.Cmd):
                     listtoprint.append(str(obj))
             print(listtoprint)
 
+    def do_count(self, arg):
+        """Counts all string representation of all instances
+        based or not on the class name."""
+        if not arg:
+            print("** class name missing **")
+            return
+        else:
+            count = 0
+            args = arg.split()
+            if args[0] not in model_class:
+                print("** class doesn't exist **")
+                return
+            for obj in storage.all().values():
+                if args[0] == obj.__class__.__name__:
+                    count += 1
+            print(count)
+
     def do_update(self, arg):
         """Updates an instance based on the class name and id by adding
         or updating attribute (save the change into the JSON file)."""
@@ -140,11 +215,12 @@ class HBNBCommand(cmd.Cmd):
             return
 
         att_name = args[2]
-        att_val = args[3][1:-1]
+        att_val = change_type(args[3])
         obj = storage.all()[k]
         setattr(obj, att_name, att_val)
 
         obj.save()
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
