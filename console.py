@@ -41,6 +41,18 @@ class HBNBCommand(cmd.Cmd):
     """Use Python command ligne to get commands for console"""
     prompt = '(hbnb) '
 
+    def do_EOF(self, arg):
+        """EOF command to exit the program"""
+        return True
+
+    def do_quit(self, arg):
+        """Quit command to exit the program"""
+        return True
+
+    def emptyline(self):
+        """empty line + ENTER don't execute anything"""
+        pass
+
     def default(self, arg):
         """Override the default method to catch more commands"""
         args = arg.split('.')
@@ -82,18 +94,6 @@ class HBNBCommand(cmd.Cmd):
                             attr[1],
                             attr[2],
                         ))
-
-    def do_EOF(self, arg):
-        """EOF command to exit the program"""
-        return True
-
-    def do_quit(self, arg):
-        """Quit command to exit the program"""
-        return True
-
-    def emptyline(self):
-        """empty line + ENTER don't execute anything"""
-        pass
 
     def do_create(self, arg):
         """ Creates a new instance of BaseModel,
