@@ -38,6 +38,7 @@ def change_type(value):
 
 
 class HBNBCommand(cmd.Cmd):
+    """Use Python command ligne to get commands for console"""
     prompt = '(hbnb) '
 
     def default(self, arg):
