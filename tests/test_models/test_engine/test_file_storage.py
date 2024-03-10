@@ -43,12 +43,6 @@ class TestFileStorage(unittest.TestCase):
         self.assertTrue(hasattr(self.storage, '_FileStorage__objects'))
         self.assertIsInstance(self.storage._FileStorage__objects, dict)
 
-    def tearDown(self) -> None:
-        """Resets FileStorage data."""
-        storage._FileStorage__objects = {}
-        if os.path.exists(storage._FileStorage__file_path):
-            os.remove(storage._FileStorage__file_path)
-
 
 if __name__ == '__main__':
     unittest.main()

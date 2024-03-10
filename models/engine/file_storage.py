@@ -25,14 +25,16 @@ class FileStorage():
     __objects = {}
 
     def all(self):
-        """"""
+        """Returns the dictionary __objects"""
         return FileStorage.__objects
 
     def new(self, obj):
+        """sets in __objects the obj with key <obj class name>.id"""
         k = "{}.{}".format(obj.__class__.__name__, obj.id)
         FileStorage.__objects[k] = obj
 
     def save(self):
+        """serializes __objects to the JSON file"""
         obj_dict = {}
         with open(FileStorage.__file_path, "w") as jsfile:
             for k,val in FileStorage.__objects.items():
@@ -40,6 +42,7 @@ class FileStorage():
             dump(obj_dict, jsfile)
 
     def reload(self):
+        """deserializes the JSON file to __objects"""
         try:
             with open(FileStorage.__file_path, "r") as read_jsfile:
                 desrl = load(read_jsfile)
