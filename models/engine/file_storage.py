@@ -44,6 +44,7 @@ class FileStorage():
     def reload(self):
         """deserializes the JSON file to __objects"""
         try:
+            desrl = {}
             with open(FileStorage.__file_path, "r") as read_jsfile:
                 desrl = load(read_jsfile)
                 for obj in desrl.values():
@@ -52,5 +53,5 @@ class FileStorage():
                         cls_obj = clsnametoobj[cls_name]
                         self.new(cls_obj(**obj))
 
-        except FileNotFoundError:
+        except Exception:
             pass
