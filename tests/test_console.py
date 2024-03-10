@@ -227,6 +227,7 @@ class TestBaseModel(unittest.TestCase):
             self.assertNotIn("BaseModel.{}".format(
                 obj10.id), storage.all().keys())
 
+
 class TestBaseModelDotNotation(unittest.TestCase):
     """Testing `Basemodel `commands using dot notation."""
 
@@ -304,12 +305,13 @@ class TestBaseModelDotNotation(unittest.TestCase):
             HBNBCommand().onecmd(HBNBCommand().precmd(
                                  f'BaseModel.destroy("{obj10.id}")'))
             self.assertNotIn(f"BaseModel.{obj_id}", storage.all().keys())
-                
+
     def tearDown(self) -> None:
         """Resets FileStorage data."""
         storage._FileStorage__objects = {}
         if os.path.exists(storage._FileStorage__file_path):
             os.remove(storage._FileStorage__file_path)
+
 
 class TestUser(unittest.TestCase):
     """Testing the `user` commands."""
@@ -386,6 +388,7 @@ class TestUser(unittest.TestCase):
             HBNBCommand().onecmd(f'destroy User {us.id}')
             self.assertNotIn("User.{}".format(
                 us.id), storage.all().keys())
+
 
 class TestUserDotNotation(unittest.TestCase):
     """Testing the `user` command's dot notation."""
@@ -477,6 +480,7 @@ class TestUserDotNotation(unittest.TestCase):
             self.assertNotIn("User.{}".format(
                 us.id), storage.all().keys())
 
+
 class TestState(unittest.TestCase):
     """Testing the `state` commands."""
 
@@ -549,6 +553,7 @@ class TestState(unittest.TestCase):
             HBNBCommand().onecmd(f'destroy State {st.id}')
             self.assertNotIn("State.{}".format(
                 st.id), storage.all().keys())
+
 
 class TestStateDotNotation(unittest.TestCase):
     """Testing the `state` command's dot notation.
@@ -641,6 +646,7 @@ class TestStateDotNotation(unittest.TestCase):
             self.assertNotIn("State.{}".format(
                 st.id), storage.all().keys())
 
+
 class TestReview(unittest.TestCase):
     """Testing the `review` commands.
     """
@@ -715,9 +721,9 @@ class TestReview(unittest.TestCase):
             self.assertNotIn("Review.{}".format(
                 rv.id), storage.all().keys())
 
+
 class TestReviewDotNotation(unittest.TestCase):
-    """Testing the `review` command's dot notation.
-    """
+    """Testing the `review` command's dot notation."""
 
     def setUp(self):
         pass
@@ -805,9 +811,9 @@ class TestReviewDotNotation(unittest.TestCase):
             self.assertNotIn("Review.{}".format(
                 rv.id), storage.all().keys())
 
+
 class TestPlace(unittest.TestCase):
-    """Testing the `place` commands.
-    """
+    """Testing the `place` commands."""
 
     def setUp(self):
         pass
@@ -878,6 +884,7 @@ class TestPlace(unittest.TestCase):
             HBNBCommand().onecmd(f'destroy Place {pl.id}')
             self.assertNotIn("Place.{}".format(
                 pl.id), storage.all().keys())
+
 
 class TestPlaceDotNotation(unittest.TestCase):
     """Testing the `place` command's dot notation.
@@ -964,6 +971,7 @@ class TestPlaceDotNotation(unittest.TestCase):
             self.assertNotIn("Place.{}".format(
                 pl.id), storage.all().keys())
 
+
 class TestAmenity(unittest.TestCase):
     """Testing the `amenity` commands."""
 
@@ -1037,6 +1045,7 @@ class TestAmenity(unittest.TestCase):
             self.assertNotIn("Amenity.{}".format(
                 am.id), storage.all().keys())
 
+
 class TestAmenityDotNotation(unittest.TestCase):
     """Testing the `amenity` command's dot notation."""
 
@@ -1107,7 +1116,8 @@ class TestAmenityDotNotation(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             am = Amenity()
             am.age = 75
-            cmmd = f'Amenity.update("{am.id}", {{"age": 25, "color": "black"}})'
+            cmmd = f'Amenity.update("{am.id}", {{"age": 25,
+                                    "color": "black"}})'
             HBNBCommand().onecmd(HBNBCommand().precmd(cmmd))
             self.assertEqual(am.__dict__["age"], 25)
             self.assertIsInstance(am.__dict__["age"], int)
@@ -1120,6 +1130,7 @@ class TestAmenityDotNotation(unittest.TestCase):
                                  f'Amenity.destroy("{am.id}")'))
             self.assertNotIn("Amenity.{}".format(
                 am.id), storage.all().keys())
+
 
 class TestCity(unittest.TestCase):
     """Testing the `city` commands."""
@@ -1193,6 +1204,7 @@ class TestCity(unittest.TestCase):
             HBNBCommand().onecmd(f'destroy City {cty.id}')
             self.assertNotIn("City.{}".format(
                 cty.id), storage.all().keys())
+
 
 class TestCityDotNotation(unittest.TestCase):
     """Testing the `city` command's dot notation.
