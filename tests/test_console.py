@@ -686,7 +686,7 @@ class TestReview(unittest.TestCase):
         """
         with patch('sys.stdout', new=StringIO()) as f:
             rv = Review()
-            rv.name = "Cecilia"
+            rv.name = "RAFMOOOOOOOOOOOOOOOOOOOOOOS"
             HBNBCommand().onecmd(f'update Review {rv.id} name "Ife"')
             self.assertEqual(rv.__dict__["name"], "Ife")
 
@@ -714,3 +714,573 @@ class TestReview(unittest.TestCase):
             HBNBCommand().onecmd(f'destroy Review {rv.id}')
             self.assertNotIn("Review.{}".format(
                 rv.id), storage.all().keys())
+
+class TestReviewDotNotation(unittest.TestCase):
+    """Testing the `review` command's dot notation.
+    """
+
+    def setUp(self):
+        pass
+
+    def tearDown(self) -> None:
+        """Resets FileStorage data."""
+        storage._FileStorage__objects = {}
+        if os.path.exists(storage._FileStorage__file_path):
+            os.remove(storage._FileStorage__file_path)
+
+    def test_count_review(self):
+        """Test count review object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(HBNBCommand().precmd('Review.count()'))
+            count = 0
+            for i in storage.all().values():
+                if type(i) == Review:
+                    count += 1
+            self.assertEqual(int(f.getvalue()), count)
+
+    def test_all_review(self):
+        """Test all review object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(HBNBCommand().precmd('Review.all()'))
+            for item in json.loads(f.getvalue()):
+                self.assertEqual(item.split()[0], '[Review]')
+
+    def test_show_review(self):
+        """Test show review object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            rv = Review()
+            rv.eyes = "green"
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Review.show("{rv.id}")'))
+            res = f"[{type(rv).__name__}] ({rv.id}) {rv.__dict__}"
+            self.assertEqual(f.getvalue().strip(), res)
+
+    def test_update_review(self):
+        """Test update review object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            rv = Review()
+            rv.name = "RAFMOS"
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Review.update("{rv.id}", name, "Ife")'))
+            self.assertEqual(rv.__dict__["name"], "Ife")
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            rv = Review()
+            rv.age = 75
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Review.update("{rv.id}", age, 25)'))
+            self.assertIn("age", rv.__dict__.keys())
+            self.assertEqual(rv.__dict__["age"], 25)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            rv = Review()
+            rv.age = 60
+            cmmd = f'Review.update("{rv.id}", age, 10, color, green)'
+            HBNBCommand().onecmd(HBNBCommand().precmd(cmmd))
+            self.assertIn("age", rv.__dict__.keys())
+            self.assertNotIn("color", rv.__dict__.keys())
+            self.assertEqual(rv.__dict__["age"], 10)
+
+    def test_update_review_dict(self):
+        """Test update review object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            rv = Review()
+            rv.age = 75
+            cmmd = f'Review.update("{rv.id}", {{"age": 25, "color": "black"}})'
+            HBNBCommand().onecmd(HBNBCommand().precmd(cmmd))
+            self.assertEqual(rv.__dict__["age"], 25)
+            self.assertIsInstance(rv.__dict__["age"], int)
+
+    def test_destroy_review(self):
+        """Test destroy review object.
+        """
+        with patch('sys.stdout', new=StringIO()):
+            rv = Review()
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Review.destroy("{rv.id}")'))
+            self.assertNotIn("Review.{}".format(
+                rv.id), storage.all().keys())
+
+class TestPlace(unittest.TestCase):
+    """Testing the `place` commands.
+    """
+
+    def setUp(self):
+        pass
+
+    def tearDown(self) -> None:
+        """Resets FileStorage data."""
+        storage._FileStorage__objects = {}
+        if os.path.exists(storage._FileStorage__file_path):
+            os.remove(storage._FileStorage__file_path)
+
+    def test_create_place(self):
+        """Test create place object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd('create Place')
+            self.assertIsInstance(f.getvalue().strip(), str)
+            self.assertIn("Place.{}".format(
+                f.getvalue().strip()), storage.all().keys())
+
+    def test_all_place(self):
+        """Test all place object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd('all Place')
+            for item in json.loads(f.getvalue()):
+                self.assertEqual(item.split()[0], '[Place]')
+
+    def test_show_place(self):
+        """Test show place object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            pl = Place()
+            pl.eyes = "green"
+            HBNBCommand().onecmd(f'show Place {pl.id}')
+            res = f"[{type(pl).__name__}] ({pl.id}) {pl.__dict__}"
+            self.assertEqual(f.getvalue().strip(), res)
+
+    def test_update_place(self):
+        """Test update place object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            pl = Place()
+            pl.name = "MOSTAFA"
+            HBNBCommand().onecmd(f'update Place {pl.id} name "Ife"')
+            self.assertEqual(pl.__dict__["name"], "Ife")
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            pl = Place()
+            pl.age = 75
+            HBNBCommand().onecmd(f'update Place {pl.id} age 25')
+            self.assertIn("age", pl.__dict__.keys())
+            self.assertEqual(pl.__dict__["age"], 25)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            pl = Place()
+            pl.age = 60
+            cmmd = f'update Place {pl.id} age 10 color green'
+            HBNBCommand().onecmd(cmmd)
+            self.assertIn("age", pl.__dict__.keys())
+            self.assertNotIn("color", pl.__dict__.keys())
+            self.assertEqual(pl.__dict__["age"], 10)
+
+    def test_destroy_place(self):
+        """Test destroy place object.
+        """
+        with patch('sys.stdout', new=StringIO()):
+            pl = Place()
+            HBNBCommand().onecmd(f'destroy Place {pl.id}')
+            self.assertNotIn("Place.{}".format(
+                pl.id), storage.all().keys())
+
+class TestPlaceDotNotation(unittest.TestCase):
+    """Testing the `place` command's dot notation.
+    """
+
+    def setUp(self):
+        pass
+
+    def tearDown(self) -> None:
+        """Resets FileStorage data."""
+        storage._FileStorage__objects = {}
+        if os.path.exists(storage._FileStorage__file_path):
+            os.remove(storage._FileStorage__file_path)
+
+    def test_count_place(self):
+        """Test count place object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(HBNBCommand().precmd('Place.count()'))
+            count = 0
+            for i in storage.all().values():
+                if type(i) == Place:
+                    count += 1
+            self.assertEqual(int(f.getvalue()), count)
+
+    def test_all_place(self):
+        """Test all place object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(HBNBCommand().precmd('Place.all()'))
+            for item in json.loads(f.getvalue()):
+                self.assertEqual(item.split()[0], '[Place]')
+
+    def test_show_place(self):
+        """Test show place object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            pl = Place()
+            pl.eyes = "green"
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Place.show("{pl.id}")'))
+            res = f"[{type(pl).__name__}] ({pl.id}) {pl.__dict__}"
+            self.assertEqual(f.getvalue().strip(), res)
+
+    def test_update_place(self):
+        """Test update place object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            pl = Place()
+            pl.name = "MOSTAFA"
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Place.update("{pl.id}", name, "Ife")'))
+            self.assertEqual(pl.__dict__["name"], "Ife")
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            pl = Place()
+            pl.age = 75
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Place.update("{pl.id}", age, 25)'))
+            self.assertIn("age", pl.__dict__.keys())
+            self.assertEqual(pl.__dict__["age"], 25)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            pl = Place()
+            pl.age = 60
+            cmmd = f'Place.update("{pl.id}", age, 10, color, green)'
+            HBNBCommand().onecmd(HBNBCommand().precmd(cmmd))
+            self.assertIn("age", pl.__dict__.keys())
+            self.assertNotIn("color", pl.__dict__.keys())
+            self.assertEqual(pl.__dict__["age"], 10)
+
+    def test_update_place_dict(self):
+        """Test update place object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            pl = Place()
+            pl.age = 75
+            cmmd = f'Place.update("{pl.id}", {{"age": 25, "color": "black"}})'
+            HBNBCommand().onecmd(HBNBCommand().precmd(cmmd))
+            self.assertEqual(pl.__dict__["age"], 25)
+            self.assertIsInstance(pl.__dict__["age"], int)
+
+    def test_destroy_place(self):
+        """Test destroy place object."""
+        with patch('sys.stdout', new=StringIO()):
+            pl = Place()
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Place.destroy("{pl.id}")'))
+            self.assertNotIn("Place.{}".format(
+                pl.id), storage.all().keys())
+
+class TestAmenity(unittest.TestCase):
+    """Testing the `amenity` commands."""
+
+    def setUp(self):
+        pass
+
+    def tearDown(self) -> None:
+        """Resets FileStorage data."""
+        storage._FileStorage__objects = {}
+        if os.path.exists(storage._FileStorage__file_path):
+            os.remove(storage._FileStorage__file_path)
+
+    def test_create_amenity(self):
+        """Test create amenity object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd('create Amenity')
+            self.assertIsInstance(f.getvalue().strip(), str)
+            self.assertIn("Amenity.{}".format(
+                f.getvalue().strip()), storage.all().keys())
+
+    def test_all_amenity(self):
+        """Test all amenity object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd('all Amenity')
+            for item in json.loads(f.getvalue()):
+                self.assertEqual(item.split()[0], '[Amenity]')
+
+    def test_show_amenity(self):
+        """Test show amenity object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            am = Amenity()
+            am.eyes = "green"
+            HBNBCommand().onecmd(f'show Amenity {am.id}')
+            res = f"[{type(am).__name__}] ({am.id}) {am.__dict__}"
+            self.assertEqual(f.getvalue().strip(), res)
+
+    def test_update_amenity(self):
+        """Test update amenity object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            am = Amenity()
+            am.name = "Cecilia"
+            HBNBCommand().onecmd(f'update Amenity {am.id} name "Ife"')
+            self.assertEqual(am.__dict__["name"], "Ife")
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            am = Amenity()
+            am.age = 75
+            HBNBCommand().onecmd(f'update Amenity {am.id} age 25')
+            self.assertIn("age", am.__dict__.keys())
+            self.assertEqual(am.__dict__["age"], 25)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            am = Amenity()
+            am.age = 60
+            cmmd = f'update Amenity {am.id} age 10 color green)'
+            HBNBCommand().onecmd(cmmd)
+            self.assertIn("age", am.__dict__.keys())
+            self.assertNotIn("color", am.__dict__.keys())
+            self.assertEqual(am.__dict__["age"], 10)
+
+    def test_destroy_amenity(self):
+        """Test destroy amenity object.
+        """
+        with patch('sys.stdout', new=StringIO()):
+            am = Amenity()
+            HBNBCommand().onecmd(f'destroy Amenity {am.id}')
+            self.assertNotIn("Amenity.{}".format(
+                am.id), storage.all().keys())
+
+class TestAmenityDotNotation(unittest.TestCase):
+    """Testing the `amenity` command's dot notation."""
+
+    def setUp(self):
+        pass
+
+    def tearDown(self) -> None:
+        """Resets FileStorage data."""
+        storage._FileStorage__objects = {}
+        if os.path.exists(storage._FileStorage__file_path):
+            os.remove(storage._FileStorage__file_path)
+
+    def test_count_amenity(self):
+        """Test count amenity object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(HBNBCommand().precmd('Amenity.count()'))
+            count = 0
+            for i in storage.all().values():
+                if type(i) == Amenity:
+                    count += 1
+            self.assertEqual(int(f.getvalue()), count)
+
+    def test_all_amenity(self):
+        """Test all amenity object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(HBNBCommand().precmd('Amenity.all()'))
+            for item in json.loads(f.getvalue()):
+                self.assertEqual(item.split()[0], '[Amenity]')
+
+    def test_show_amenity(self):
+        """Test show amenity object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            am = Amenity()
+            am.eyes = "green"
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Amenity.show("{am.id}")'))
+            res = f"[{type(am).__name__}] ({am.id}) {am.__dict__}"
+            self.assertEqual(f.getvalue().strip(), res)
+
+    def test_update_amenity(self):
+        """Test update amenity object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            am = Amenity()
+            am.name = "MOSTAFA"
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Amenity.update("{am.id}", name, "Ife")'))
+            self.assertEqual(am.__dict__["name"], "Ife")
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            am = Amenity()
+            am.age = 75
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Amenity.update("{am.id}", age, 25)'))
+            self.assertIn("age", am.__dict__.keys())
+            self.assertEqual(am.__dict__["age"], 25)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            am = Amenity()
+            am.age = 60
+            cmmd = f'Amenity.update("{am.id}", age, 10, color, green)'
+            HBNBCommand().onecmd(HBNBCommand().precmd(cmmd))
+            self.assertIn("age", am.__dict__.keys())
+            self.assertNotIn("color", am.__dict__.keys())
+            self.assertEqual(am.__dict__["age"], 10)
+
+    def test_update_amenity_dict(self):
+        """Test update amenity object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            am = Amenity()
+            am.age = 75
+            cmmd = f'Amenity.update("{am.id}", {{"age": 25, "color": "black"}})'
+            HBNBCommand().onecmd(HBNBCommand().precmd(cmmd))
+            self.assertEqual(am.__dict__["age"], 25)
+            self.assertIsInstance(am.__dict__["age"], int)
+
+    def test_destroy_amenity(self):
+        """Test destroy amenity object."""
+        with patch('sys.stdout', new=StringIO()):
+            am = Amenity()
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'Amenity.destroy("{am.id}")'))
+            self.assertNotIn("Amenity.{}".format(
+                am.id), storage.all().keys())
+
+class TestCity(unittest.TestCase):
+    """Testing the `city` commands."""
+
+    def setUp(self):
+        pass
+
+    def tearDown(self) -> None:
+        """Resets FileStorage data."""
+        storage._FileStorage__objects = {}
+        if os.path.exists(storage._FileStorage__file_path):
+            os.remove(storage._FileStorage__file_path)
+
+    def test_create_city(self):
+        """Test create city object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd('create City')
+            self.assertIsInstance(f.getvalue().strip(), str)
+            self.assertIn("City.{}".format(
+                f.getvalue().strip()), storage.all().keys())
+
+    def test_all_city(self):
+        """Test all city object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd('all City')
+            for item in json.loads(f.getvalue()):
+                self.assertEqual(item.split()[0], '[City]')
+
+    def test_show_city(self):
+        """Test show city object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            cty = City()
+            cty.eyes = "green"
+            HBNBCommand().onecmd(f'show City {cty.id}')
+            res = f"[{type(cty).__name__}] ({cty.id}) {cty.__dict__}"
+            self.assertEqual(f.getvalue().strip(), res)
+
+    def test_update_city(self):
+        """Test update city object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            cty = City()
+            cty.name = "MOSTAFA"
+            HBNBCommand().onecmd(f'update City {cty.id} name "Ife"')
+            self.assertEqual(cty.__dict__["name"], "Ife")
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            cty = City()
+            cty.age = 75
+            HBNBCommand().onecmd(f'update City {cty.id} age 25')
+            self.assertIn("age", cty.__dict__.keys())
+            self.assertEqual(cty.__dict__["age"], 25)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            cty = City()
+            cty.age = 60
+            cmmd = f'update City {cty.id} age 10 color green'
+            HBNBCommand().onecmd(cmmd)
+            self.assertIn("age", cty.__dict__.keys())
+            self.assertNotIn("color", cty.__dict__.keys())
+            self.assertEqual(cty.__dict__["age"], 10)
+
+    def test_destroy_city(self):
+        """Test destroy city object.
+        """
+        with patch('sys.stdout', new=StringIO()):
+            cty = City()
+            HBNBCommand().onecmd(f'destroy City {cty.id}')
+            self.assertNotIn("City.{}".format(
+                cty.id), storage.all().keys())
+
+class TestCityDotNotation(unittest.TestCase):
+    """Testing the `city` command's dot notation.
+    """
+
+    def setUp(self):
+        pass
+
+    def tearDown(self) -> None:
+        """Resets FileStorage data."""
+        storage._FileStorage__objects = {}
+        if os.path.exists(storage._FileStorage__file_path):
+            os.remove(storage._FileStorage__file_path)
+
+    def test_count_city(self):
+        """Test count city object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(HBNBCommand().precmd('City.count()'))
+            count = 0
+            for i in storage.all().values():
+                if type(i) == City:
+                    count += 1
+            self.assertEqual(int(f.getvalue()), count)
+
+    def test_all_city(self):
+        """Test all city object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(HBNBCommand().precmd('City.all()'))
+            for item in json.loads(f.getvalue()):
+                self.assertEqual(item.split()[0], '[City]')
+
+    def test_show_city(self):
+        """Test show city object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            cty = City()
+            cty.eyes = "green"
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'City.show("{cty.id}")'))
+            res = f"[{type(cty).__name__}] ({cty.id}) {cty.__dict__}"
+            self.assertEqual(f.getvalue().strip(), res)
+
+    def test_update_city(self):
+        """Test update city object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            cty = City()
+            cty.name = "MOSTAFA"
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'City.update("{cty.id}", name, "Ife")'))
+            self.assertEqual(cty.__dict__["name"], "Ife")
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            cty = City()
+            cty.age = 75
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'City.update("{cty.id}", age, 25)'))
+            self.assertIn("age", cty.__dict__.keys())
+            self.assertEqual(cty.__dict__["age"], 25)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            cty = City()
+            cty.age = 60
+            cmmd = f'City.update("{cty.id}", age, 10, color, green)'
+            HBNBCommand().onecmd(HBNBCommand().precmd(cmmd))
+            self.assertIn("age", cty.__dict__.keys())
+            self.assertNotIn("color", cty.__dict__.keys())
+            self.assertEqual(cty.__dict__["age"], 10)
+
+    def test_update_city_dict(self):
+        """Test update city object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            cty = City()
+            cty.age = 75
+            cmmd = f'City.update("{cty.id}", {{"age": 25, "color": "black"}})'
+            HBNBCommand().onecmd(HBNBCommand().precmd(cmmd))
+            self.assertEqual(cty.__dict__["age"], 25)
+            self.assertIsInstance(cty.__dict__["age"], int)
+
+    def test_destroy_city(self):
+        """Test destroy city object.
+        """
+        with patch('sys.stdout', new=StringIO()):
+            cty = City()
+            HBNBCommand().onecmd(HBNBCommand().precmd(
+                                 f'City.destroy("{cty.id}")'))
+            self.assertNotIn("City.{}".format(
+                cty.id), storage.all().keys())
