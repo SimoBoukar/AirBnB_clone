@@ -137,3 +137,79 @@ class TestConsole(unittest.TestCase):
         storage._FileStorage__objects = {}
         if os.path.exists(storage._FileStorage__file_path):
             os.remove(storage._FileStorage__file_path)
+
+class TestBaseModel(unittest.TestCase):
+    """Testing `Basemodel `commands."""
+
+    def setUp(self):
+        pass
+
+    def tearDown(self) -> None:
+        """Resets FileStorage data."""
+        storage._FileStorage__objects = {}
+        if os.path.exists(storage._FileStorage__file_path):
+            os.remove(storage._FileStorage__file_path)
+
+    def testing_create_basemodel(self):
+        """Test create basemodel object.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd('create BaseModel')
+            self.assertIsInstance(f.getvalue().strip(), str)
+            self.assertIn("BaseModel.{}".format(
+                f.getvalue().strip()), storage.all().keys())
+
+    def testing_all_basemodel(self):
+        """Test all basemodel object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd('all BaseModel')
+            for item in json.loads(f.getvalue()):
+                self.assertEqual(item.split()[0], '[BaseModel]')
+
+    def test_show_basemodel(self):
+        """Test show basemodel object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            obj10 = BaseModel()
+            obj10.eyes = "green"
+            HBNBCommand().onecmd(f'show BaseModel {obj10.id}')
+            res = f"[{type(obj10).__name__}] ({obj10.id}) {obj10.__dict__}"
+            self.assertEqual(f.getvalue().strip(), res)
+
+    def testing_update_basemodel(self):
+        """Test update basemodel object."""
+        with patch('sys.stdout', new=StringIO()) as f:
+            obj10 = BaseModel()
+            obj10.name = "Cecilia"
+            HBNBCommand().onecmd(f'update BaseModel {obj10.id} name "Ife"')
+            self.assertEqual(obj10.__dict__["name"], "Ife")
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            obj10 = BaseModel()
+            obj10.age = 75
+            HBNBCommand().onecmd(f'update BaseModel {obj10.id} age 25')
+            self.assertIn("age", obj10.__dict__.keys())
+            self.assertEqual(obj10.__dict__["age"], 25)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            obj10 = BaseModel()
+            obj10.savings = 25.67
+            HBNBCommand().onecmd(f'update BaseModel {obj10.id} savings 35.89')
+            self.assertIn("savings", obj10.__dict__.keys())
+            self.assertEqual(obj10.__dict__["savings"], 35.89)
+
+        with patch('sys.stdout', new=StringIO()) as f:
+            obj10 = BaseModel()
+            obj10.age = 60
+            cmmd = f'update BaseModel {obj10.id} age 10 color "green"'
+            HBNBCommand().onecmd(cmmd)
+            self.assertIn("age", obj10.__dict__.keys())
+            self.assertNotIn("color", obj10.__dict__.keys())
+            self.assertEqual(obj10.__dict__["age"], 10)
+
+    def testing_destroy_basemodel(self):
+        """Test destroy basemodel object."""
+        with patch('sys.stdout', new=StringIO()):
+            obj10 = BaseModel()
+            HBNBCommand().onecmd(f'destroy BaseModel {obj10.id}')
+            self.assertNotIn("BaseModel.{}".format(
+                obj10.id), storage.all().keys())
