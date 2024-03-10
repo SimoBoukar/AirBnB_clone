@@ -5,14 +5,12 @@
 import unittest
 import json
 import os
-from models.engine.file_storage import FileStorage, BaseModel, User, State
-from models.engine.file_storage import City, Amenity, Place, Review
+from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
 
 
 class TestFileStorage(unittest.TestCase):
     """Tests cases for FileStorage"""
-
     def setUp(self):
         """Prepare the test fixture before each test method."""
         self.storage = FileStorage()

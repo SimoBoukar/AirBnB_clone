@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""Store object model"""
+"""
+Store object model
+"""
 from json import dump, load
 from models.base_model import BaseModel
 from models.user import User
