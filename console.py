@@ -103,9 +103,9 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
         class_name = arg.strip()
-        obj_class = model_class[class_name]
 
-        if obj_class:
+        if class_name in model_class:
+            obj_class = model_class[class_name]
             new_obj = obj_class()
             new_obj.save()
             print(new_obj.id)

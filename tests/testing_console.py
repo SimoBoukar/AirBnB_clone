@@ -22,12 +22,6 @@ class TestConsole(unittest.TestCase):
     def setUp(self):
         pass
 
-    def tearDown(self) -> None:
-        """Resets FileStorage data."""
-        storage._FileStorage__objects = {}
-        if os.path.exists(storage._FileStorage__file_path):
-            os.remove(storage._FileStorage__file_path)
-
     def testing_simple(self):
         """ Tests basic commands."""
 
@@ -137,3 +131,9 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd("help help")
             self.assertIsInstance(file_output.getvalue(), str)
             self.assertEqual(file_output.getvalue().strip(), "List available commands with \"help\" or detailed help with \"help cmd\".")
+
+    def tearDown(self) -> None:
+        """Resets FileStorage data."""
+        storage._FileStorage__objects = {}
+        if os.path.exists(storage._FileStorage__file_path):
+            os.remove(storage._FileStorage__file_path)
