@@ -10,14 +10,15 @@ from models.amenity import Amenity
 from models.place import Place
 
 clsnametoobj = {
-    'BaseModel' : BaseModel,
-    'User' : User,
+    'BaseModel': BaseModel,
+    'User': User,
     'Amenity': Amenity,
     'City': City,
     'State': State,
     'Place': Place,
     'Review': Review
 }
+
 
 class FileStorage():
     """Create a File storage class."""
@@ -37,7 +38,7 @@ class FileStorage():
         """serializes __objects to the JSON file"""
         obj_dict = {}
         with open(FileStorage.__file_path, "w") as jsfile:
-            for k,val in FileStorage.__objects.items():
+            for k, val in FileStorage.__objects.items():
                 obj_dict[k] = val.to_dict()
             dump(obj_dict, jsfile)
 
