@@ -8,7 +8,7 @@ from models.base_model import BaseModel
 
 
 class TestUser(unittest.TestCase):
-    """Tests cases  """
+    """Tests cases"""
 
     def setUp(self):
         """Set up test parameters."""
