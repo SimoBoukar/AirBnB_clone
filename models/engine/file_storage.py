@@ -54,6 +54,5 @@ class FileStorage():
                     if cls_name in clsnametoobj:
                         cls_obj = clsnametoobj[cls_name]
                         self.new(cls_obj(**obj))
-
         except Exception:
             pass
