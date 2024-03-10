@@ -4,6 +4,7 @@
 """
 import unittest
 import json
+import os
 from models.engine.file_storage import FileStorage, BaseModel, User, State
 from models.engine.file_storage import City, Amenity, Place, Review
 from models.base_model import BaseModel
@@ -42,6 +43,13 @@ class TestFileStorage(unittest.TestCase):
         self.test_storage.reload()
         self.assertTrue(hasattr(self.test_storage, '_FileStorage__objects'))
         self.assertIsInstance(self.test_storage._FileStorage__objects, dict)
+
+    def tearDown(self):
+        """Clean storage file"""
+        try:
+            os.remove(FileStorage._FileStorage__file_path)
+        except FileNotFoundError:
+            pass
 
 
 if __name__ == '__main__':
